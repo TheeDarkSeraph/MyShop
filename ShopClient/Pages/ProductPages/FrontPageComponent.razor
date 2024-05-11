@@ -1,0 +1,98 @@
+﻿<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            @if (FeaturedProductList.Count > 0) {
+                <div class="controller-container text-dark">
+                    <SfCarousel ButtonsVisibility="CarouselButtonVisibility.VisibleOnHover" AnimationEffect="CarouselAnimationEffect.Slide"
+                                AutoPlay="true" ShowIndicators="true">
+                        <ChildContent>
+                        @foreach(Product product in FeaturedProductList.OrderByDescending(p => p.UploadDate).Take(5)) {
+                            <CarouselItem>
+                                <div>
+                                    @if (!string.IsNullOrEmpty(product.Base64Img)) {
+                                        <figure class="img-container">
+                                            <img src="@product.Base64Img" alt="@product.Name" class="float-end" 
+                                                width="280" height="400"/>
+                                        </figure>
+                                    }
+                                </div>
+                                <div class="d-flex justify-content-center">
+                                    <div style="position:absolute; bottom:50px">
+                                        <div class="vstack gap-3 mb-3">
+                                            <div>
+                                                <p>
+                                                    <span style="font-family:Impact; text-indent:2px;" class="text-dark fw-bold display-2">
+                                                        @product.Name
+                                                        <sup style="font-family:'Courier New'">
+                                                            <span class="badge rounded-pill bg-primary fs-6">@GetNewLabel(product.UploadDate)</span>
+                                                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-family:sans-serif; font-size:11px;">
+                                                                @(product.Amount-1>0? $"{product.Amount-1}+":product.Amount)
+                                                                <span class="visually-hidden">unread messages</span>
+                                                            </span>
+                                                            <span></span>
+                                                        </sup>
+
+                                                    </span>
+                                                </p>
+                                            </div>
+                                            <p class="text-muted fs-5 w-75" style="text-align:justify-all;font-family:Cambria">@GetDescription(product.Description)</p>
+                                        </div>
+                                        <div class="hstack gap-1 d-flex justify-content-center">
+                                            <button class="btn btn-primary fw-bold">
+                                                <i class="fa fa-cart-plus"></i> Add to cart
+                                            </button>
+                                            <button class="btn btn-outline-primary fw-bold">
+                                                <i class="fa fa-list"></i> Details
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </CarouselItem>
+                        }
+                        </ChildContent>
+                        <PreviousButtonTemplate>
+                            <img src="../Resources/lessthan.png" width="50" height="50" class="styleCursor" />
+                        </PreviousButtonTemplate>
+                        <NextButtonTemplate>
+                            <img src="../Resources/greaterthan.png" width="50" height="50" class="styleCursor"/>
+                        </NextButtonTemplate>
+                        <IndicatorsTemplate>
+                            <div class="indicator"></div>
+                        </IndicatorsTemplate>
+                    </SfCarousel>
+
+                </div>
+            } else {
+                <div class="alert alert-info">No product available</div>
+            }
+
+        </div>
+
+    </div>
+
+</div>
+<style>
+    .styleCursor{
+        cursor:pointer;
+    }
+</style>
+@code {
+    List<Product> FeaturedProductList = new();
+    protected override async Task OnInitializedAsync() {
+        await RetrieveFeaturedProducts();
+    }
+    private async Task RetrieveFeaturedProducts() {
+        FeaturedProductList.Clear();
+        var availableProducts = await productService.GetProducts(false);
+        if (availableProducts == null) return;
+        FeaturedProductList = availableProducts;
+    }
+    string GetNewLabel(DateTime uploadDate) {
+        int maxDays = 30;
+        return (DateTime.Now - uploadDate).Days <= maxDays ? "New" : string.Empty;
+    }
+    string GetDescription(string description) {
+        int maxChars = 100;
+        return description.Length > maxChars ? $"{description.Substring(0, maxChars)}..." : description;
+    }
+}

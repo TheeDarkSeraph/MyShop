@@ -1,0 +1,53 @@
+﻿@page "/add-category"
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <EditForm Model="@MyCategory" Enhance OnValidSubmit="SaveCategory">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <div class="card">
+                    <div class="card-header">Add Category</div>
+                    <div class="card-body">
+                        <div>
+                            <div class="form-group">
+                                <label class="form-label">Name</label>
+                                <InputText class="form-control" @bind-Value="MyCategory.Name" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        @if (IsSaving) {
+                            <BusyButtonComponent ShowBusyButton="IsSaving"></BusyButtonComponent>
+                        } else {
+                            <button type="submit" class="btn btn-outline-primary">
+                                <i class="fa fa-plus"></i> Add
+                            </button>
+                        }
+                    </div>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
+<MessageDialog @ref="messageDialog"></MessageDialog>
+
+
+@code {
+    MessageDialog? messageDialog;
+    bool IsSaving = false;
+    Category MyCategory = new();
+
+    async Task SaveCategory() {
+        IsSaving = true;
+        ServiceResponse response = await categoryService.AddCategory(MyCategory);
+        messageDialog!.SetDialogValues(response.IsSuccess ? "Success" : "Fail", response.Message);
+        ShowMessageDialog();
+        IsSaving = false;
+    }
+    private async void ShowMessageDialog() {
+        await messageDialog!.ShowMessage();
+        StateHasChanged();
+        IsSaving = false;
+    }
+}

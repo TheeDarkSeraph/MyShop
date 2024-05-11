@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using SharedModels.Contracts;
 using SharedModels.Repository;
 using ShopServer.Data;
+using ShopServer.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +21,7 @@ builder.Services.AddDbContext<ShopDBContext>(options =>
 
 // DI
 builder.Services.AddScoped<IProduct, ProductRepository>();
+builder.Services.AddScoped<ICategory, CategoryRepository>();
 
 var app = builder.Build();
 

@@ -1,0 +1,52 @@
+﻿@page "/categories"
+@if(categoryService.AllCategories.Count > 0) {
+    <div class="card stick-top" style="font-family:Tahoma; max-height100%; overflow-y:scroll">
+        <div class="card-header">Product Categories</div>
+        <div class="card-body">
+            <div class="list-group">
+                <button type="button" @onclick="DefaultCategoryClicked" class="list-group-item list-group-item-action @(CategoryId==0?"active":"")">
+                    <i class="fa fa-object-group"></i>All
+                </button>
+                @foreach (var categoryItem in categoryService.AllCategories) {
+                    var category = categoryItem; // for inline purpose I guess
+                    <button type="button" @onclick="()=>CategoryClicked(category.Id)" 
+                        class="list-group-item list-group-item-action mt-3 fw-bold @(CategoryId==category.Id?"active":"")">
+                        @category.Name.ToUpper()
+                    </button>
+                }
+            </div>
+        </div>
+    </div>
+} else {
+    <p>No categories found</p>
+}
+<style>
+    .card-header {
+        height: 60px; 
+        text-align: center;
+        padding: 10px;
+        font-size: 26px;
+        font-family: Impact;
+        color: darkslategrey
+    }
+</style>
+
+
+@code {
+    public int CategoryId { get; set; }
+    [Parameter] public EventCallback DefaultCategoryClickedEvent { get; set; }
+    [Parameter] public EventCallback<int> CategoryClickedEvent { get; set; }
+
+
+    protected async override Task OnInitializedAsync() {
+        await categoryService.GetAndCacheCategories();
+    }
+    async void DefaultCategoryClicked() {
+        CategoryId = 0;
+        await DefaultCategoryClickedEvent.InvokeAsync();
+    }
+    async Task CategoryClicked(int newId) {
+        CategoryId = newId;
+        await CategoryClickedEvent.InvokeAsync(newId);
+    }
+}

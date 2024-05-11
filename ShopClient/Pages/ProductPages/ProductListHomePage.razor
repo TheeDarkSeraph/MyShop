@@ -1,0 +1,32 @@
+﻿@page "/products"
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-2">
+            <CategoriesPage CategoryClickedEvent="CategoryClicked" DefaultCategoryClickedEvent="DefaultCategoryClicked" />
+        </div>
+        <div class="col-lg-10">
+            <ProductListPage AllProducts="ProductsInCategory" />
+        </div>
+    </div>
+</div>
+@code{
+    public List<Product> ProductsInCategory { get; set; } = new List<Product>();
+
+    protected async override Task OnInitializedAsync() {
+        ProductsInCategory = await productService.GetProducts(false);
+    }
+
+    private async void CategoryClicked(int catId){
+        if (catId == 0)
+            return;
+        ProductsInCategory = await productService.GetProductsByCategory(catId);
+        StateHasChanged();
+    }
+
+
+    private async void DefaultCategoryClicked() {
+        ProductsInCategory = await productService.GetProducts(false);
+        StateHasChanged();
+    }
+}

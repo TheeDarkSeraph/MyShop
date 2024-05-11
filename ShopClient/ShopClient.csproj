@@ -27,7 +27,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Pages\AddOrUpdateProductComponent.razor" />
+    <None Include="Pages\ProductPages\AddOrUpdateProductComponent.razor" />
+    <None Include="wwwroot\resources\greaterthan.png" />
+    <None Include="wwwroot\resources\lessthan.png" />
   </ItemGroup>
 
 </Project>

@@ -1,12 +1,8 @@
 ﻿using SharedModels.Models;
 using SharedModels.Responses;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace SharedModels.Contracts {
+namespace SharedModels.Repository {
+    // holds product information
     public interface IProduct {
         Task<List<Product>> GetProducts(bool featuredOnly);
         Task<ServiceResponse> AddProduct(Product model);

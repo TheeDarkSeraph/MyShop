@@ -1,10 +1,9 @@
 ﻿using SharedModels;
-using SharedModels.Contracts;
 using SharedModels.Models;
 using SharedModels.Responses;
 
 namespace ShopClient.Services {
-    public class ProductService (HttpClient httpClient) : IProduct {
+    public class ProductService (HttpClient httpClient) : IProductService {
         private const string productApi = "api/product";
 
         public async Task<List<Product>> GetProducts(bool featuredOnly) {
@@ -12,10 +11,11 @@ namespace ShopClient.Services {
             if (!response.IsSuccessStatusCode)
                 return null!;
             var apiResponse = await response.Content.ReadAsStringAsync();
-
-            Console.WriteLine("RESPONSE HERE " + apiResponse + " END response");
             return JsonUtils.DeserializeJsonString<List<Product>>(apiResponse);
         }
+
+        public async Task<List<Product>> GetProductsByCategory(int categoryId) // I choose not to cache the product since the domain is unknown and this is a tutorial
+            => (await GetProducts(false)).Where(p => p.CategoryId == categoryId).ToList();
 
         public async Task<ServiceResponse> AddProduct(Product model) {
             var response = await httpClient.PostAsync(productApi,
@@ -23,7 +23,6 @@ namespace ShopClient.Services {
             if (!response.IsSuccessStatusCode)
                 return ServiceResponse.Error;
             var apiResponse = await response.Content.ReadAsStringAsync();
-            Console.WriteLine("Add RESPONSE HERE " + apiResponse + " END response");
             return JsonUtils.DeserializeJsonString<ServiceResponse>(apiResponse);
         }
 
@@ -38,5 +37,6 @@ namespace ShopClient.Services {
         public async Task<ServiceResponse> UpdateProduct(Product model) {
             throw new NotImplementedException();
         }
+
     }
 }

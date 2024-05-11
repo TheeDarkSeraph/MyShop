@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SharedModels.Contracts;
 using SharedModels.Models;
 using SharedModels.Responses;
 using ShopServer.Data;
@@ -16,14 +15,12 @@ namespace SharedModels.Repository {
             if (model == null)
                 return Task.FromResult(ServiceResponse.Null);
             if (ProductNameExists(model.Name))
-                return Task.FromResult(ServiceResponse.ProductNameExists);
+                return Task.FromResult(ServiceResponse.MainNameExists);
             context.Products.Add(model);
             context.SaveChanges();
             return Task.FromResult(ServiceResponse.Saved);
         }
-        private bool ProductNameExists(string productName) {
-            return context.Products.Any(x => x.Name.ToLower() == productName.ToLower());
-        }
+        private bool ProductNameExists(string productName) => context.Products.Any(x => x.Name.ToLower() == productName.ToLower());
 
         public Task<ServiceResponse> DeleteProduct(int id) {
             throw new NotImplementedException();

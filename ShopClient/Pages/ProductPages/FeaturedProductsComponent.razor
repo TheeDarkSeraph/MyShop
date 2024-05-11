@@ -1,0 +1,102 @@
+﻿<div class="container-fluid mt-5">
+    <div class="row">
+        <div class="col-md-12 col-sm-12">
+            <hr />
+            <span style="font-family:MyFont">Featured</span>
+            <div class="=card border-0">
+                <div class="d-flex justify-content-evenly align-items-center">
+                    <img src="../Resources/lessthan.png" width="50" height="50" class="styleCursor" @onclick="PreviousButton"/>
+                    @if(FeaturedSublist.Count > 0){
+                        @foreach (Product product in FeaturedSublist){
+                            <div class="card">
+                                <div class ="card-body">
+                                    @if(product.UploadDate<DateTime.Now){
+                                        <span class="badge bg-primary d-flex align-items-end float-end" style="width:50px">New</span>
+                                    } else{
+                                        <span class="badge bg-primary d-flex align-items-end float-end" style="width:50px; height:20px">
+                                        </span>
+                                    }
+                                    <img class="card-img-top childImage" src="@product.Base64Img" width="150" height="200" style="max-width:150px;min-width:150px;"/>
+                                    <div class="productCover bg-secondary text-white d-flex justify-content-center text-wrap">
+                                        @product.Name
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+
+                    <img src="../Resources/greaterthan.png" width="50" height="50" class="styleCursor" @onclick="NextButton"/>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<style>
+    .styleCursor{
+        cursor:pointer;
+    }
+    .productCover{
+        width:150px;
+        font-size:14px;
+        height:50px;
+        position:absolute;
+        bottom:10px;
+        border-radius:10px;
+        padding:2px;
+        cursor:pointer;
+    }
+    .productCover:hover{
+        opacity:1
+    }
+    img{
+        opacity:1;
+        cursor:pointer;
+    }
+    .childImage:hover{
+        opacity:0.5;
+    }
+</style>
+@code {
+
+    List<Product> FeaturedProductList = new();
+    protected override async Task OnInitializedAsync() {
+        await RetrieveFeaturedProducts();
+    }
+    private async Task RetrieveFeaturedProducts() {
+        FeaturedProductList.Clear();
+        var availableProducts = await productService.GetProducts(true);
+        if (availableProducts == null) return;
+        FeaturedProductList = availableProducts;
+        LoadData();
+    }
+
+    public int PageSize { get; set; } = 8;
+    public int Skip { get; set; } = 0;
+    public List<Product> FeaturedSublist = new();
+    private void LoadData(){
+        if (FeaturedProductList.Count <= PageSize) {
+            FeaturedSublist = FeaturedProductList;
+            return;
+        }
+        FeaturedSublist = FeaturedProductList.Skip(Skip).Take(PageSize).ToList();
+    }
+    void PreviousButton(){
+        if (Skip <= 0)
+            return;
+        if(Skip - PageSize < 0)
+            Skip = 0;
+        else
+            Skip -= PageSize;
+        LoadData();
+    }
+    void NextButton(){
+        if (Skip + PageSize >= FeaturedProductList.Count)
+            return;
+        Skip += PageSize;
+        LoadData();
+    }
+}

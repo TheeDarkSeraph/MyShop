@@ -15,6 +15,21 @@
                                 <label class="form-label">Name</label>
                                 <InputText class="form-control" @bind-Value="MyProduct.Name" />
                             </div>
+
+                            <div class="form-group">
+                                <label class="form-label"> Select Category</label>
+                                @if (categoryService.AllCategories.Count > 0) {
+                                    <InputSelect class="form-select form-control-sm" @bind-Value="@MyProduct.CategoryId">
+                                        <option selected>Select Category</option>
+                                        @foreach (var category in categoryService.AllCategories) {
+                                            <option value="@category.Id">@category.Name</option>
+                                        }
+                                    </InputSelect>
+                                }
+                            </div>
+
+
+
                             <div class="form-group mt-3">
                                 <label class="form-label">Price</label>
                                 <InputNumber class="form-control" @bind-Value="MyProduct.Price" />
@@ -56,6 +71,16 @@
     bool IsSaving = false;
     string ImageUploadMessage = "";
     const int maxFileSize = 1024 * 1024 * 5; // 5MB
+
+
+
+
+    protected async override Task OnInitializedAsync() {
+        await categoryService.GetAndCacheCategories();
+    }
+
+
+
     async Task UploadImage(InputFileChangeEventArgs e) {
         var file = e.File;
         // make sure file is a valid image format

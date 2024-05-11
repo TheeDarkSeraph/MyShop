@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using SharedModels.Contracts;
+﻿using Microsoft.AspNetCore.Mvc;
 using SharedModels.Models;
+using SharedModels.Repository;
 
 namespace ShopServer.Controllers {
     [Route("api/[controller]")]

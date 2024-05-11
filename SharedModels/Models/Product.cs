@@ -11,9 +11,9 @@ namespace SharedModels.Models {
     public class Product {
         public int Id { get; set; }
         [Required]
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
         [Required]
-        public string? Description { get; set; }
+        public string Description { get; set; } = null!;
         [Required, Range(0.1, 999999.99)]
         public decimal Price { get; set; }
         [Required, DisplayName("Product Image")]
@@ -22,6 +22,9 @@ namespace SharedModels.Models {
         public int Amount { get; set; }
         public bool Featured { get; set; } = false;
         public DateTime UploadDate { get; set; } = DateTime.Now;
+        public int? CategoryId { get; set; }
+        public Category? Category { get; set; } = null!;
+        
 
     }
 }
