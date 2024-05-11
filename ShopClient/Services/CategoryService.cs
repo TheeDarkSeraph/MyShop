@@ -3,9 +3,15 @@ using SharedModels.Models;
 using SharedModels.Responses;
 
 namespace ShopClient.Services {
-    public class CategoryService(HttpClient httpClient) : ICategoryService {
+    public class CategoryService(HttpClient httpClient) : ICategoryService { // not shared among different users
         private const string categoryApi = "api/category";
-
+        /* In a Blazor application, each user session is typically isolated, 
+         *      and the components and services used within the session maintain their own state.
+         * If the data variable is stored within a component or service used within the user's session, 
+         *      it will be accessible and modifiable only within that session. Other users accessing the same Blazor 
+         *      page will have their own separate instances of the component or service, which means they will have 
+         *      their own separate data variables.
+         */
         //public Action? CategoryAction { get; set; }
         public List<Category> AllCategories { get; set; } = new List<Category>();
 

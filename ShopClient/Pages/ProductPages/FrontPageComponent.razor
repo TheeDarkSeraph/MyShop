@@ -35,7 +35,7 @@
                                                     </span>
                                                 </p>
                                             </div>
-                                            <p class="text-muted fs-5 w-75" style="text-align:justify-all;font-family:Cambria">@GetDescription(product.Description)</p>
+                                            <p class="text-muted fs-5 w-75" style="text-align:justify-all;font-family:Cambria">@General.GetDescription(product.Description)</p>
                                         </div>
                                         <div class="hstack gap-1 d-flex justify-content-center">
                                             <button class="btn btn-primary fw-bold">
@@ -90,9 +90,5 @@
     string GetNewLabel(DateTime uploadDate) {
         int maxDays = 30;
         return (DateTime.Now - uploadDate).Days <= maxDays ? "New" : string.Empty;
-    }
-    string GetDescription(string description) {
-        int maxChars = 100;
-        return description.Length > maxChars ? $"{description.Substring(0, maxChars)}..." : description;
     }
 }
