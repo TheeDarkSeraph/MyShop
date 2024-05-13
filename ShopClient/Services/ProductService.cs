@@ -1,9 +1,10 @@
 ﻿using SharedModels;
 using SharedModels.Models;
 using SharedModels.Responses;
+using ShopClient.Auth;
 
 namespace ShopClient.Services {
-    public class ProductService (HttpClient httpClient) : IProductService {
+    public class ProductService (HttpClient httpClient, AuthService authService) : IProductService {
         private const string productApi = "api/product";
 
         public async Task<List<Product>> GetProducts(bool featuredOnly) {

@@ -8,14 +8,14 @@ namespace ShopServer.Repository {
 
         public async Task<List<Category>> GetCategories() => await context.Categories.ToListAsync();
         
-        public Task<ServiceResponse> AddCategory(Category model) {
+        public async Task<ServiceResponse> AddCategory(Category model) {
             if (model == null)
-                return Task.FromResult(ServiceResponse.Null);
+                return ServiceResponse.Null;
             if (CategoryNameExists(model.Name))
-                return Task.FromResult(ServiceResponse.MainNameExists);
+                return ServiceResponse.MainNameExists;
             context.Categories.Add(model);
-            context.SaveChanges();
-            return Task.FromResult(ServiceResponse.Saved);
+            await context.SaveChangesAsync();
+            return ServiceResponse.Saved;
         }
 
         private bool CategoryNameExists(string catName) => context.Categories.Any(x => x.Name.ToLower() == catName.ToLower());

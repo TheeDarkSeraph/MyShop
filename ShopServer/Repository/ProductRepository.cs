@@ -11,14 +11,14 @@ namespace SharedModels.Repository {
             return await context.Products.ToListAsync();
         }
 
-        public Task<ServiceResponse> AddProduct(Product model) {
+        public async Task<ServiceResponse> AddProduct(Product model) {
             if (model == null)
-                return Task.FromResult(ServiceResponse.Null);
+                return ServiceResponse.Null;
             if (ProductNameExists(model.Name))
-                return Task.FromResult(ServiceResponse.MainNameExists);
+                return ServiceResponse.MainNameExists;
             context.Products.Add(model);
-            context.SaveChanges();
-            return Task.FromResult(ServiceResponse.Saved);
+            await context.SaveChangesAsync();
+            return ServiceResponse.Saved;
         }
         private bool ProductNameExists(string productName) => context.Products.Any(x => x.Name.ToLower() == productName.ToLower());
 

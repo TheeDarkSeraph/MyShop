@@ -1,0 +1,49 @@
+﻿@page "/identity/account/login"
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6">
+            <EditForm Enhance Model="User" OnValidSubmit="HandleLogin">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <div class="card">
+                    <div class="card-header">Fill this form to Register</div>
+                    <div class="card-body">
+                        <div class="form-group mt-3">
+                            <label class="form-label">Email</label>
+                            <InputText @bind-Value="User.Email" class="form-control"></InputText>
+                        </div>
+                        <div class="form-group mt-3">
+                            <label class="form-label">Password</label>
+                            <input type="password" @bind="User.Password" class="form-control"></input>
+                        </div>
+                        <div class="form-group mt-3">
+                            @if (ShowBusyButton) {
+                                <BusyButtonComponent ShowBusyButton="ShowBusyButton"></BusyButtonComponent>
+                            } else {
+                                <button class="btn btn-outline-primary float-end" type="submit">Register</button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
+@code {
+    LoginDTO User = new();
+    bool ShowBusyButton = false;
+    async Task HandleLogin() {
+        ShowBusyButton = true;
+        var result = await accountService.Login(User);
+        if (result.Flag) {
+            var customAuthStateProvider = (CustomAuthStateProvider)authStateProvider;
+            await customAuthStateProvider.UpdateAuthenticationState(
+                new TokenProp(){
+                    Token = result.Token,
+                    RefreshToken = result.RefreshToken
+                });
+            navManager.NavigateTo("/", forceLoad: true);
+        }
+    }
+}

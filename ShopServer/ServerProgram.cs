@@ -22,6 +22,7 @@ builder.Services.AddDbContext<ShopDBContext>(options =>
 // DI
 builder.Services.AddScoped<IProduct, ProductRepository>();
 builder.Services.AddScoped<ICategory, CategoryRepository>();
+builder.Services.AddScoped<IUserAccount, UserAccountRepository>();
 
 var app = builder.Build();
 
@@ -36,6 +37,9 @@ if (app.Environment.IsDevelopment()) {
 app.UseHttpsRedirection();
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
+
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 

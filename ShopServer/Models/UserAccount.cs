@@ -1,8 +1,6 @@
-﻿namespace ShopServer.Models {
-    public enum UserRole {
-        Admin,
-        User
-    }
+﻿using SharedModels.DTOs;
+
+namespace ShopServer.Models {
     public class UserAccount {
         public int Id { get; set; }
         public string Email { get; set; } = null!;

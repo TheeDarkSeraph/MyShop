@@ -1,5 +1,6 @@
 ﻿@using System.Net.Http
 @using System.Net.Http.Json
+@using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.Routing
 @using Microsoft.AspNetCore.Components.Web
@@ -8,12 +9,15 @@
 @using Microsoft.JSInterop
 @using ShopClient
 @using ShopClient.Shared
+@using ShopClient.Auth
 @using ShopClient.Services
 
 
 @using SharedModels
 @using SharedModels.Models
 @using SharedModels.Responses
+@using SharedModels.DTOs
+
 @using Syncfusion.Blazor.Navigations
 
 
@@ -25,5 +29,8 @@
 @inject IJSRuntime jsruntime
 @inject IProductService productService
 @inject ICategoryService categoryService
+@inject IUserAccountService accountService
 
+@inject AuthenticationStateProvider authStateProvider
+@inject NavigationManager navManager
 
