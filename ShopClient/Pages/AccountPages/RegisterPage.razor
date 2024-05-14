@@ -45,8 +45,8 @@
     async Task HandleRegistration(){
         ShowBusyButton = true;
         var (flag, message) = await accountService.Register(User);
-        messageDialog.SetDialogValues(flag ? "success" : "danger", message!);
 
+        messageDialog.SetDialogValues(flag ? "success" : "danger", message!);
         messageDialog.ShowMessage();
         ShowBusyButton = false;
     }

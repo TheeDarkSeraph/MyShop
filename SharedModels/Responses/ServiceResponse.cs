@@ -13,6 +13,7 @@ namespace SharedModels.Responses {
         public static ServiceResponse AlreadyRegistered = new(false, "User is registered");
         public static ServiceResponse RegistrationSuccessful= new(true, "User account created");
 
+        public static ServiceResponse ProductRemoved = new(true, "Product removed successfully");
 
 
         public static ServiceResponse Saved = new(true, "Saved");

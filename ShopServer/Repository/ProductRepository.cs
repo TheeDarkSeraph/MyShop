@@ -7,8 +7,8 @@ namespace SharedModels.Repository {
     public class ProductRepository (ShopDBContext context): IProduct {
         public async Task<List<Product>> GetProducts(bool featuredOnly) {
             if (featuredOnly)
-                return await context.Products.Where(x => x.Featured).ToListAsync();
-            return await context.Products.ToListAsync();
+                return await context.Products.Where(x => x.Featured).Include(_=>_.Category).ToListAsync();
+            return await context.Products.Include(_ => _.Category).ToListAsync();
         }
 
         public async Task<ServiceResponse> AddProduct(Product model) {

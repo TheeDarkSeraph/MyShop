@@ -16,7 +16,8 @@
                                         <span class="badge bg-primary d-flex align-items-end float-end" style="width:50px; height:20px">
                                         </span>
                                     }
-                                    <img class="card-img-top childImage" src="@product.Base64Img" width="150" height="200" style="max-width:150px;min-width:150px;"/>
+                                    <img class="card-img-top childImage" src="@product.Base64Img" width="150" height="200" style="max-width:150px;min-width:150px;"
+                                         @onclick="()=>ViewProduct(product)" />
                                     <div class="productCover bg-secondary text-white d-flex justify-content-center text-wrap">
                                         @product.Name
                                     </div>
@@ -74,6 +75,9 @@
         LoadData();
     }
 
+    void ViewProduct(Product product) {
+        navManager.NavigateTo($"/products/{product.Id}");
+    }
     public int PageSize { get; set; } = 8;
     public int Skip { get; set; } = 0;
     public List<Product> FeaturedSublist = new();

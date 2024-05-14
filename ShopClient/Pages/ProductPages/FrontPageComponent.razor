@@ -11,8 +11,8 @@
                                 <div>
                                     @if (!string.IsNullOrEmpty(product.Base64Img)) {
                                         <figure class="img-container">
-                                            <img src="@product.Base64Img" alt="@product.Name" class="float-end" 
-                                                width="280" height="400"/>
+                                            <img src="@product.Base64Img" alt="@product.Name" class="float-end"  style="cursor:pointer" 
+                                                @onclick="()=>ViewProduct(product)" width="280" height="400"/>
                                         </figure>
                                     }
                                 </div>
@@ -21,7 +21,8 @@
                                         <div class="vstack gap-3 mb-3">
                                             <div>
                                                 <p>
-                                                    <span style="font-family:Impact; text-indent:2px;" class="text-dark fw-bold display-2">
+                                                    <span style="font-family:Impact; text-indent:2px; cursor:pointer" class="text-dark fw-bold display-2"
+                                                            @onclick="()=>ViewProduct(product)">
                                                         @product.Name
                                                         <sup style="font-family:'Courier New'">
                                                             <span class="badge rounded-pill bg-primary fs-6">@GetNewLabel(product.UploadDate)</span>
@@ -38,10 +39,10 @@
                                             <p class="text-muted fs-5 w-75" style="text-align:justify-all;font-family:Cambria">@General.GetDescription(product.Description)</p>
                                         </div>
                                         <div class="hstack gap-1 d-flex justify-content-center">
-                                            <button class="btn btn-primary fw-bold">
+                                                <button class="btn btn-primary fw-bold" @onclick="()=>AddToCart(product)">
                                                 <i class="fa fa-cart-plus"></i> Add to cart
                                             </button>
-                                            <button class="btn btn-outline-primary fw-bold">
+                                                <button class="btn btn-outline-primary fw-bold" @onclick="()=>ViewProduct(product)">
                                                 <i class="fa fa-list"></i> Details
                                             </button>
                                         </div>
@@ -76,7 +77,10 @@
         cursor:pointer;
     }
 </style>
+
+<MessageDialog @ref="messageDialog"></MessageDialog>
 @code {
+    MessageDialog? messageDialog;
     List<Product> FeaturedProductList = new();
     protected override async Task OnInitializedAsync() {
         await RetrieveFeaturedProducts();
@@ -90,5 +94,18 @@
     string GetNewLabel(DateTime uploadDate) {
         int maxDays = 30;
         return (DateTime.Now - uploadDate).Days <= maxDays ? "New" : string.Empty;
+    }
+
+    void ViewProduct(Product product) {
+        navManager.NavigateTo($"/products/{product.Id}");
+    }
+
+    async Task AddToCart(Product product) {
+        DisplayResponse(await cartService.AddToCart(product));
+    }
+
+    private void DisplayResponse(ServiceResponse serviceResponse) {
+        messageDialog!.SetDialogValues(serviceResponse.IsSuccess ? "success" : "danger", serviceResponse.Message!);
+        messageDialog!.ShowMessage();
     }
 }

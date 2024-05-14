@@ -1,5 +1,6 @@
 ﻿@page "/products"
-
+@page "/products/{Id:int}"
+@page "/products/filter/{Filter}"
 <div class="container-fluid">
     <div class="row">
         <div class="col-lg-2">
@@ -8,7 +9,12 @@
         <div class="col-lg-10">
             <BannerPage />
             <div class="card-header border-success-subtle mb-2"></div>
-            <ProductListPage AllProducts="ProductsInCategory" />
+            @if(ShowProductList){
+                <ProductListPage AllProducts="InternalProductList??ProductsInCategory" HandleProductDetailsEvent="HandleProductDetailsEvent" />
+            }
+            @if(ShowProductDetails){
+                <ProductDetail HandleBackClickedEvent="HandleBackClickedEvent" Product="ProductDetails" />
+            }
         </div>
 
         <div class="col-lg-12 mt-5">
@@ -20,8 +26,18 @@
 
     </div>
 </div>
-@code{
+<MessageDialog @ref="messageDialog"></MessageDialog>
+@code {
+    MessageDialog? messageDialog;
+    [Parameter] public int Id { get; set; } = 0;
+    [Parameter] public string Filter { get; set; } = string.Empty;
     public List<Product> ProductsInCategory { get; set; } = new List<Product>();
+
+    public List<Product> InternalProductList { get; set; } = new List<Product>();
+    public bool ShowProductList { get; set; } = true;
+    public bool ShowProductDetails { get; set; } = false;
+    public Product ProductDetails { get; set; } = new();
+
 
     protected async override Task OnInitializedAsync() {
         ProductsInCategory = await productService.GetProducts(false);
@@ -30,7 +46,10 @@
     private async void CategoryClicked(int catId){
         if (catId == 0)
             return;
+        InternalProductList = null!;
+        Filter = string.Empty;
         ProductsInCategory = await productService.GetProductsByCategory(catId);
+
         StateHasChanged();
     }
 
@@ -38,5 +57,34 @@
     private async void DefaultCategoryClicked() {
         ProductsInCategory = await productService.GetProducts(false);
         StateHasChanged();
+    }
+
+    private void HandleBackClickedEvent() {
+        ShowProductList = true;
+        ShowProductDetails = false;
+    }
+
+    protected override void OnParametersSet() {
+        if(Id>0){
+            ProductDetails = ProductsInCategory.FirstOrDefault(p => p.Id == Id)!;
+            if (ProductDetails != null){
+                ShowProductDetails = true;
+                ShowProductList = false;
+            }
+        }
+        if(!string.IsNullOrEmpty(Filter)){
+            InternalProductList = ProductsInCategory.Where(p => p.Name.Contains(Filter, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+
+    }
+
+    private void HandleProductDetailsEvent(Product viewProduct) { // will be called from the component's button, it will provide the product
+        ProductDetails = viewProduct;
+        ShowProductDetails = true;
+        ShowProductList = false;
+    }
+    private void DisplayResponse(ServiceResponse serviceResponse) {
+        messageDialog!.SetDialogValues(serviceResponse.IsSuccess ? "success" : "danger", serviceResponse.Message!);
+        messageDialog!.ShowMessage();
     }
 }

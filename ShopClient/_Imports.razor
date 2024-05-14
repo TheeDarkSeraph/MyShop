@@ -21,6 +21,7 @@
 @using Syncfusion.Blazor.Navigations
 
 
+@using ShopClient.Models
 @using ShopClient.Pages.CategoryPages
 @using ShopClient.Pages.OtherPages
 @using ShopClient.Pages.ProductPages
@@ -30,6 +31,7 @@
 @inject IProductService productService
 @inject ICategoryService categoryService
 @inject IUserAccountService accountService
+@inject ICart cartService
 
 @inject AuthenticationStateProvider authStateProvider
 @inject NavigationManager navManager

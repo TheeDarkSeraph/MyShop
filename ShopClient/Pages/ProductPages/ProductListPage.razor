@@ -1,27 +1,51 @@
 ﻿@if (AllProducts is not null){
+    var listData = AllProducts.Skip(SkipValue).Take(TakeValue).ToList();
     <div class="container-fluid">
         <div class="row featured__filter">
-        @foreach (var item in AllProducts !. OrderBy(_ => _. Featured)){
-            <div class="col-lg-2 col-md-3 col-sm-6 border-success">
-                <div class="featured__item" style="width:200px;">
-                <div class="featured__item__pic set-bg">
-                    <img src="@item.Base64Img" width="150" height="200" />
-                    <ul class="featured__item__pic__hover">
-                        <li><a href="#"><i class="fa fa-heart"></i></a></li>
-                        <li><a href="#"><i class="fa fa-retweet"></i></a></li>
-                        <li><a href="#"><i class="fa fa-shopping-cart text-danger"></i></a></li>
-                    </ul>
+            @foreach (var item in listData!.OrderBy(_ => _.Featured)) {
+                <div class="col-lg-2 col-md-3 col-sm-6 border-success">
+                    <div class="featured__item" style="width:200px;">
+                        <div class="featured__item__pic set-bg">
+                            <img src="@item.Base64Img" width="150" height="200" @onclick="()=>ViewProductDetails(item)" style="cursor:pointer"/>
+                            <ul class="featured__item__pic__hover">
+                                <li><a href="#"><i class="fa fa-heart"></i></a></li>
+                                <li><a href="#"><i class="fa fa-retweet"></i></a></li>
+                                <li><a @onclick="()=>AddToCart(item)" style="cursor:pointer"><i class="fa fa-shopping-cart text-danger"></i></a></li>
+                            </ul>
+                        </div>
+                        <div class="featured__item__text">
+                            <h6 class="text-primary" @onclick="()=>ViewProductDetails(item)" style="cursor:pointer">@item.Name</h6>
+                            <h5 class="text-danger">@item.Price.ToString("$#.##")</h5>
+                        </div>
+                    </div>
                 </div>
-                <div class="featured__item__text">
-                    <h6 class="text-primary">@item.Name</h6>
-                    <h5 class="text-danger">@item.Price.ToString("$#.##")</h5>
-                </div>
-                </div>
+            }
+            <div class="d-flex justify-content-center">
+                <SfPager @ref="@Page" PageSize=6 NumericItemsCount=4 TotalItemsCount=AllProducts.Count ItemClick="Click">
+                </SfPager>
             </div>
-        }
         </div>
     </div>
 }
+<MessageDialog @ref="messageDialog"></MessageDialog>
 @code {
+    MessageDialog? messageDialog;
+    SfPager? Page;
+    public int SkipValue;
+    public int TakeValue = 6;
     [Parameter] public List<Product> AllProducts { get; set; } = new();
+    [Parameter] public EventCallback<Product> HandleProductDetailsEvent { get; set; }
+    public void Click(PagerItemClickEventArgs args) {
+        SkipValue = (args.CurrentPage * Page!.PageSize) - Page.PageSize;
+        TakeValue = Page.PageSize;
+    }
+    async Task ViewProductDetails(Product viewProduct) {
+        await HandleProductDetailsEvent.InvokeAsync(viewProduct);
+    }
+
+    async Task AddToCart(Product product) {
+        var (flag, message) = await cartService.AddToCart(product);
+        messageDialog!.SetDialogValues(flag ? "success" : "danger", message!);
+        messageDialog.ShowMessage();
+    }
 }

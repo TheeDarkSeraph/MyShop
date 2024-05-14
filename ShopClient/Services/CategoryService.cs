@@ -1,6 +1,7 @@
 ﻿using SharedModels;
 using SharedModels.Models;
 using SharedModels.Responses;
+using ShopClient.Auth;
 
 namespace ShopClient.Services {
     public class CategoryService(HttpClient httpClient) : ICategoryService { // not shared among different users

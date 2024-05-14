@@ -19,6 +19,7 @@ namespace ShopClient.Services {
             => (await GetProducts(false)).Where(p => p.CategoryId == categoryId).ToList();
 
         public async Task<ServiceResponse> AddProduct(Product model) {
+            await authService.GetUserDetails();
             var response = await httpClient.PostAsync(productApi,
                 JsonUtils.GenerateStringContent(JsonUtils.SerializeObject(model)));
             if (!response.IsSuccessStatusCode)
